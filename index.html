@@ -8,11 +8,36 @@
 	<head>
 		<title>GoView</title>
 		<meta charset="utf-8" />
-		<meta name="desciprion" content="Inserir aqui a descrição do site."/>
+		<meta name="desciprion" content="GOVIEW - App patra gerenciamento de entrevistas."/>
 		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 		<link rel="stylesheet" href="assets/css/main.css" />
 		<link rel="stylesheet" href="assets/fontawesome/css/all.min.css" />
 		<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+		
+		<link rel="manifest" href="manifest.json">
+		
+		<style>
+		#snackbar {
+		  visibility: hidden;
+		  min-width: 250px;
+		  margin-left: -125px;
+		  background-color: #333;
+		  color: #fff;
+		  text-align: center;
+		  border-radius: 2px;
+		  padding: 16px;
+		  position: fixed;
+		  z-index: 1;
+		  left: 50%;
+		  bottom: 30px;
+		}
+
+		#snackbar.show {
+		  visibility: visible;
+		  -webkit-animation: fadein 0.5s;
+		  animation: fadein 0.5s;
+		}
+	    </style>
 	</head>
 	<body class="is-preload">
 
@@ -70,7 +95,7 @@
 										<img src="images/entrevista.avif" alt="Inseir aqui texto alternativo para a imagem" />
 									</span>
 									<header class="major">
-										<h3><a href="landing.html" class="link">Tenha seu sistema de gerenciamento quando quiser e em qualquer lugar</a></h3>
+										<h3><a href="index.html" class="link">Tenha seu sistema de gerenciamento quando quiser e em qualquer lugar</a></h3>
 										<p>Com nosso aplicativo, é possivel realizar o registro das entrevistas de forma prática e dinâmica, sem a necessidade de ter um computador por perto.</p>
 									</header>
 								</article>
@@ -79,7 +104,7 @@
 										<img src="images/tempo.avif" alt="Inseir aqui texto alternativo para a imagem" />
 									</span>
 									<header class="major">
-										<h3><a href="landing.html" class="link">Tenha uma melhor gestão do tempo</a></h3>
+										<h3><a href="index.html" class="link">Tenha uma melhor gestão do tempo</a></h3>
 										<p>Não perca tempo entrevistando um mesmo candidato mais de uma vez.</p>
 									</header>
 								</article>
@@ -88,7 +113,7 @@
 										<img src="images/analise.avif" alt="Inseir aqui texto alternativo para a imagem" />
 									</span>
 									<header class="major">
-										<h3><a href="landing.html" class="link">Tenha uma análise completa nas suas mãos</a></h3>
+										<h3><a href="index.html" class="link">Tenha uma análise completa nas suas mãos</a></h3>
 										<p>É possível analizar as estatísticas sobre as entrevistas, vagas e profissionais contratados e desqualificados.</p>
 									</header>
 								</article>
@@ -113,11 +138,10 @@
 					<footer id="footer">
 						<div class="inner">
 							<ul class="icons">
-								<li><a href="#" class="icon brands alt fa-twitter"><span class="label">Twitter</span></a></li>
-								<li><a href="#" class="icon brands alt fa-facebook-f"><span class="label">Facebook</span></a></li>
-								<li><a href="#" class="icon brands alt fa-instagram"><span class="label">Instagram</span></a></li>
-								<li><a href="#" class="icon brands alt fa-github"><span class="label">GitHub</span></a></li>
-								<li><a href="#" class="icon brands alt fa-linkedin-in"><span class="label">LinkedIn</span></a></li>
+								<li><a href="https://twitter.com/senacpe" class="icon brands alt fa-twitter"><span class="label">Twitter</span></a></li>
+								<li><a href="https://www.facebook.com/senacpe" class="icon brands alt fa-facebook-f"><span class="label">Facebook</span></a></li>
+								<li><a href="https://www.instagram.com/senacpe/" class="icon brands alt fa-instagram"><span class="label">Instagram</span></a></li>
+								<li><a href="https://www.linkedin.com/company/senacpe/?originalSubdomain=br" class="icon brands alt fa-linkedin-in"><span class="label">LinkedIn</span></a></li>
 							</ul>
 							<ul class="copyright">
 								<li>&copy; GOVIEW</li>
@@ -135,6 +159,46 @@
 			<script src="assets/js/breakpoints.min.js"></script>
 			<script src="assets/js/util.js"></script>
 			<script src="assets/js/main.js"></script>
+	
+	<div id="snackbar">Uma nova versão está disponível! Clique <a id="reload">AQUI</a> para atualizar.</div>
+	  
+	<script>
+    let newWorker;
+    function showUpdateBar() {
+      let snackbar = document.getElementById('snackbar');
+      snackbar.className = 'show';
+    }
+    // The click event on the pop up notification
+    document.getElementById('reload').addEventListener('click', function () {
+      newWorker.postMessage({ action: 'skipWaiting' });
+    });
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/service-worker.js').then(reg => {
+        reg.addEventListener('updatefound', () => {
+          // A wild service worker has appeared in reg.installing!
+          newWorker = reg.installing;
+          newWorker.addEventListener('statechange', () => {
+            // Has network.state changed?
+            switch (newWorker.state) {
+              case 'installed':
+                if (navigator.serviceWorker.controller) {
+                  // new update available
+                  showUpdateBar();
+                }
+                // No update available
+                break;
+            }
+          });
+        });
+      });
+      let refreshing;
+      navigator.serviceWorker.addEventListener('controllerchange', function () {
+        if (refreshing) return;
+        window.location.reload();
+        refreshing = true;
+      });
+    }
+  </script>
 
 	</body>
 </html>
